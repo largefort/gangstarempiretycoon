@@ -1,0 +1,976 @@
+<html><head><base href="." />
+<title>Gangstar Empire Tycoon</title>
+<style>
+:root {
+  --main-bg: #1a1a1a;
+  --text: #ffffff;
+  --accent: #ff4d4d;
+  --secondary: #4d4d4d;
+}
+
+body {
+  background: var(--main-bg);
+  color: var(--text);
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 20px;
+}
+
+.resources {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.resource {
+  background: var(--secondary);
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.production-rate {
+  font-size: 0.8em;
+  color: #00ff00;
+  margin-top: 5px;
+}
+
+.buildings {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.building {
+  background: var(--secondary);
+  padding: 15px;
+  border-radius: 8px;
+  position: relative;
+}
+
+.building h3 {
+  margin-top: 0;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+}
+
+.modal-content {
+  background: var(--secondary);
+  width: 80%;
+  max-width: 500px;
+  margin: 50px auto;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.homies-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.homie {
+  background: var(--main-bg);
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.gang-wars {
+  margin-top: 20px;
+  padding: 20px;
+  background: var(--secondary);
+  border-radius: 8px;
+}
+
+.prestige-section {
+  margin-top: 20px;
+  padding: 20px;
+  background: var(--secondary);
+  border-radius: 8px;
+}
+
+.prestige-stats {
+  margin-bottom: 15px;
+}
+
+.prestige-requirements {
+  margin: 15px 0;
+}
+
+.prestige-requirements ul {
+  list-style: none;
+  padding: 0;
+}
+
+.prestige-requirements li {
+  margin: 5px 0;
+}
+
+#prestige-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.recruit-section {
+  margin-top: 20px;
+  padding: 20px;
+  background: var(--secondary);
+  border-radius: 8px;
+}
+
+.recruit-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.recruit-timer {
+  font-size: 0.9em;
+  color: var(--accent);
+}
+
+.refresh-button {
+  background: #4CAF50;
+  margin-left: 10px;
+}
+
+.recruit-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.recruit-card {
+  background: var(--main-bg);
+  padding: 15px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.recruit-cost {
+  color: var(--accent);
+  font-size: 0.9em;
+  margin: 10px 0;
+}
+
+button {
+  background: var(--accent);
+  color: var(--text);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  background: var(--accent);
+  border-radius: 4px;
+  display: none;
+}
+
+#loading-screen {
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%; 
+  background: #1a1a1a; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: center; 
+  z-index: 1000;
+}
+
+#title-screen {
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%; 
+  background: #1a1a1a; 
+  display: none; 
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: center; 
+  z-index: 999;
+}
+
+.save-slot {
+  background: #4d4d4d; 
+  padding: 20px; 
+  border-radius: 8px; 
+  width: 300px; 
+  text-align: center;
+}
+</style>
+</head>
+<body>
+<div id="loading-screen">
+  <svg width="100" height="100" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="40" stroke="#ff4d4d" stroke-width="8" fill="none">
+      <animate attributeName="stroke-dasharray" from="0 251.2" to="251.2 0" dur="2s" repeatCount="indefinite"/>
+      <animate attributeName="stroke-dashoffset" from="0" to="251.2" dur="2s" repeatCount="indefinite"/>
+    </circle>
+  </svg>
+  <h2 style="color: #fff; margin-top: 20px;">Loading...</h2>
+</div>
+
+<div id="title-screen">
+  <div style="position: absolute; top: 20px; left: 20px; text-align: left;">
+    <h3 style="color: #666; margin: 0;">Gangstar Empire Tycoon</h3>
+    <p style="color: #666; margin: 5px 0;">Version: 1.1.1 Beta</p>
+    <p style="color: #666; margin: 5px 0;">Last Updated: 2024</p>
+    <ul style="color: #666; font-size: 0.9em; margin: 10px 0; padding-left: 20px;">
+      <li>Added save system</li>
+      <li>Increased homie limit to 100</li>
+      <li>Added recruitment system</li>
+      <li>Added gang wars</li>
+      <li>Fixed recruit timer initialization bug</li>
+      <li>Fixed homie assignment system</li>
+      <li>Fixed building capacity display</li>
+      <li>Added Thug Legacy prestige system</li>
+      <li>Added production multipliers</li>
+    </ul>
+  </div>
+  <h1 style="color: #ff4d4d; font-size: 48px; margin-bottom: 40px;">Gangstar Empire Tycoon</h1>
+  <div id="save-slots" style="display: flex; flex-direction: column; gap: 20px;">
+    <div class="save-slot">
+      <h3>Save Slot 1</h3>
+      <button onclick="loadSaveSlot(1)" id="slot1-load">Load Game</button>
+      <button onclick="startNewGame(1)">New Game</button>
+    </div>
+    <div class="save-slot">
+      <h3>Save Slot 2</h3>
+      <button onclick="loadSaveSlot(2)" id="slot2-load">Load Game</button>
+      <button onclick="startNewGame(2)">New Game</button>
+    </div>
+    <div class="save-slot">
+      <h3>Save Slot 3</h3>
+      <button onclick="loadSaveSlot(3)" id="slot3-load">Load Game</button>
+      <button onclick="startNewGame(3)">New Game</button>
+    </div>
+  </div>
+</div>
+
+<div id="game-container" style="display: none;">
+<h1>Gangstar Empire Tycoon</h1>
+
+<div class="resources">
+  <div class="resource">
+    <h3>Cash</h3>
+    <span id="cash">$1000</span>
+    <div class="production-rate">+<span id="cash-per-second">0</span>/s</div>
+  </div>
+  <div class="resource">
+    <h3>Drugs</h3>
+    <span id="drugs">100</span>
+    <div class="production-rate">+<span id="drugs-per-second">0</span>/s</div>
+  </div>
+  <div class="resource">
+    <h3>Weapons</h3>
+    <span id="weapons">50</span>
+    <div class="production-rate">+<span id="weapons-per-second">0</span>/s</div>
+  </div>
+  <div class="resource">
+    <h3>Respect</h3>
+    <span id="respect">10</span>
+    <div class="production-rate">+<span id="respect-per-second">0</span>/s</div>
+  </div>
+</div>
+
+<div class="buildings">
+  <div class="building">
+    <h3>Drug Lab</h3>
+    <p>Production: 1 drug/s</p>
+    <p>Assigned Homies: <span id="drug-lab-homies">0/100</span></p>
+    <button onclick="openAssignModal('drug-lab')">Assign Homies</button>
+  </div>
+  <div class="building">
+    <h3>Weapons Factory</h3>
+    <p>Production: 1 weapon/s</p>
+    <p>Assigned Homies: <span id="weapons-factory-homies">0/100</span></p>
+    <button onclick="openAssignModal('weapons-factory')">Assign Homies</button>
+  </div>
+  <div class="building">
+    <h3>Counterfeit</h3>
+    <p>Production: $20/s</p>
+    <p>Assigned Homies: <span id="counterfeit-homies">0/100</span></p>
+    <button onclick="openAssignModal('counterfeit')">Assign Homies</button>
+  </div>
+  <div class="building">
+    <h3>Gangbangers Base</h3>
+    <p>Production: 1 respect/s</p>
+    <p>Assigned Homies: <span id="gangbangers-base-homies">0/100</span></p>
+    <button onclick="openAssignModal('gangbangers-base')">Assign Homies</button>
+  </div>
+  <div class="building">
+    <h3>Hospital</h3>
+    <p>Production: 1 health/s</p>
+    <p>Assigned Homies: <span id="hospital-homies">0/100</span></p>
+    <button onclick="openAssignModal('hospital')">Assign Homies</button>
+  </div>
+</div>
+
+<div class="gang-wars">
+  <h2>Gang Wars</h2>
+  <button onclick="startGangWar()">Start Gang War</button>
+  <p>Available Homies for War: <span id="available-homies">5</span></p>
+</div>
+
+<div class="prestige-section">
+  <h2>Thug Legacy System</h2>
+  <div class="prestige-stats">
+    <p>Current Thug Force: <span id="thug-force">1x</span></p>
+    <p>Total Resets: <span id="total-resets">0</span></p>
+  </div>
+  <div class="prestige-requirements">
+    <h3>Requirements for Prestige:</h3>
+    <ul>
+      <li>Weapons: <span id="req-weapons">0</span>/10,000</li>
+      <li>Drugs: <span id="req-drugs">0</span>/10,000</li>
+      <li>Cash: $<span id="req-cash">0</span>/100,000</li>
+      <li>Respect: <span id="req-respect">0</span>/1,000</li>
+    </ul>
+  </div>
+  <button id="prestige-button" onclick="initiatePrestige()" disabled>Initiate Thug Legacy</button>
+</div>
+
+<div class="recruit-section">
+  <div class="recruit-section-header">
+    <div>
+      <h2>Recruit New Homies</h2>
+      <span id="recruit-timer"></span>
+    </div>
+    <button class="refresh-button" onclick="refreshRecruits(true)">Force Refresh</button>
+  </div>
+  <div class="recruit-list" id="recruit-list">
+    <!-- Recruit cards will be dynamically added here -->
+  </div>
+</div>
+
+<div id="assignModal" class="modal">
+  <div class="modal-content">
+    <h2>Assign Homies</h2>
+    <div class="homies-list" id="homies-list">
+      <!-- Homies will be dynamically added here -->
+    </div>
+    <button onclick="closeAssignModal()">Close</button>
+  </div>
+</div>
+
+<div class="notification" id="notification"></div>
+
+<script>
+let currentSaveSlot = null;
+
+const gameState = {
+  resources: {
+    cash: 1000,
+    drugs: 100,
+    weapons: 50,
+    respect: 10,
+    health: 0
+  },
+  prestige: {
+    thugForce: 1,
+    totalResets: 0,
+    requiredResources: {
+      weapons: 10000,
+      drugs: 10000,
+      cash: 100000,
+      respect: 1000
+    }
+  },
+  buildings: {
+    'drug-lab': {
+      name: 'Drug Lab',
+      homies: [],
+      maxHomies: 100,
+      production: 1
+    },
+    'weapons-factory': {
+      name: 'Weapons Factory',
+      homies: [],
+      maxHomies: 100,
+      production: 1
+    },
+    'counterfeit': {
+      name: 'Counterfeit',
+      homies: [],
+      maxHomies: 100,
+      production: 20
+    },
+    'gangbangers-base': {
+      name: 'Gangbangers Base',
+      homies: [],
+      maxHomies: 100,
+      production: 1
+    },
+    'hospital': {
+      name: 'Hospital',
+      homies: [],
+      maxHomies: 100,
+      production: 1
+    }
+  },
+  homies: [
+    { id: 1, name: 'Big Mike', strength: 10, assigned: false },
+    { id: 2, name: 'Crazy Joe', strength: 8, assigned: false },
+    { id: 3, name: 'Silent Sam', strength: 12, assigned: false },
+    { id: 4, name: 'Quick Rick', strength: 7, assigned: false },
+    { id: 5, name: 'Mad Dog', strength: 15, assigned: false }
+  ],
+  recruitSystem: {
+    nextRefresh: new Date().getTime() + 3600000,
+    refreshInterval: 3600000,
+    baseRecruits: [
+      { id: 6, name: 'Street Boss', strength: 20, cost: 2000, weaponsCost: 20 },
+      { id: 7, name: 'Shadow Ninja', strength: 15, cost: 1500, weaponsCost: 15 },
+      { id: 8, name: 'Thunder Fist', strength: 18, cost: 1800, weaponsCost: 18 },
+      { id: 9, name: 'Ghost Runner', strength: 12, cost: 1200, weaponsCost: 12 },
+      { id: 10, name: 'Iron Duke', strength: 25, cost: 2500, weaponsCost: 25 },
+      { id: 11, name: 'Steel Knuckle', strength: 22, cost: 2200, weaponsCost: 22 },
+      { id: 12, name: 'Dark Angel', strength: 19, cost: 1900, weaponsCost: 19 },
+      { id: 13, name: 'Night Hawk', strength: 17, cost: 1700, weaponsCost: 17 },
+      { id: 14, name: 'Silent Blade', strength: 21, cost: 2100, weaponsCost: 21 },
+      { id: 15, name: 'Blood Dragon', strength: 23, cost: 2300, weaponsCost: 23 }
+    ]
+  },
+  potentialRecruits: [
+    { id: 6, name: 'Street Boss', strength: 20, cost: 2000, weaponsCost: 20 },
+    { id: 7, name: 'Shadow Ninja', strength: 15, cost: 1500, weaponsCost: 15 },
+    { id: 8, name: 'Thunder Fist', strength: 18, cost: 1800, weaponsCost: 18 },
+    { id: 9, name: 'Ghost Runner', strength: 12, cost: 1200, weaponsCost: 12 },
+    { id: 10, name: 'Iron Duke', strength: 25, cost: 2500, weaponsCost: 25 }
+  ]
+};
+
+function saveGame() {
+  if (!currentSaveSlot) return;
+  
+  const saveData = {
+    resources: gameState.resources,
+    prestige: gameState.prestige,
+    buildings: gameState.buildings,
+    homies: gameState.homies,
+    potentialRecruits: gameState.potentialRecruits,
+    recruitSystem: gameState.recruitSystem,
+    lastSaved: new Date().toISOString()
+  };
+  
+  localStorage.setItem(`gangstar-save-${currentSaveSlot}`, JSON.stringify(saveData));
+  showNotification('Game saved!');
+}
+
+function loadSaveSlot(slot) {
+  const savedData = localStorage.getItem(`gangstar-save-${slot}`);
+  
+  if (!savedData) {
+    showNotification('No save data found!');
+    return;
+  }
+  
+  const data = JSON.parse(savedData);
+  
+  // Initialize default prestige data if missing
+  const defaultPrestige = {
+    thugForce: 1,
+    totalResets: 0,
+    requiredResources: {
+      weapons: 10000,
+      drugs: 10000,
+      cash: 100000,
+      respect: 1000
+    }
+  };
+  
+  gameState.resources = data.resources || gameState.resources;
+  gameState.prestige = data.prestige || defaultPrestige;
+  gameState.buildings = data.buildings || gameState.buildings;
+  gameState.homies = data.homies || gameState.homies;
+  gameState.potentialRecruits = data.potentialRecruits || gameState.potentialRecruits;
+  gameState.recruitSystem = data.recruitSystem || {
+    nextRefresh: new Date().getTime() + 3600000,
+    refreshInterval: 3600000,
+    baseRecruits: gameState.recruitSystem.baseRecruits
+  };
+  
+  currentSaveSlot = slot;
+  document.getElementById('title-screen').style.display = 'none';
+  document.getElementById('game-container').style.display = 'block';
+  
+  updateResources();
+  updatePrestigeUI();
+  updateHomiesDisplay();
+  updateRecruitList();
+  showNotification('Game loaded!');
+}
+
+function startNewGame(slot) {
+  currentSaveSlot = slot;
+  gameState.resources = {
+    cash: 1000,
+    drugs: 100,
+    weapons: 50,
+    respect: 10,
+    health: 0
+  };
+  
+  gameState.prestige = {
+    thugForce: 1,
+    totalResets: 0,
+    requiredResources: {
+      weapons: 10000,
+      drugs: 10000,
+      cash: 100000,
+      respect: 1000
+    }
+  };
+
+  Object.values(gameState.buildings).forEach(building => {
+    building.homies = [];
+  });
+  
+  gameState.homies = [
+    { id: 1, name: 'Big Mike', strength: 10, assigned: false },
+    { id: 2, name: 'Crazy Joe', strength: 8, assigned: false },
+    { id: 3, name: 'Silent Sam', strength: 12, assigned: false },
+    { id: 4, name: 'Quick Rick', strength: 7, assigned: false },
+    { id: 5, name: 'Mad Dog', strength: 15, assigned: false }
+  ];
+
+  gameState.recruitSystem = {
+    nextRefresh: new Date().getTime() + 3600000,
+    refreshInterval: 3600000,
+    baseRecruits: gameState.recruitSystem.baseRecruits
+  };
+  
+  gameState.potentialRecruits = [
+    { id: 6, name: 'Street Boss', strength: 20, cost: 2000, weaponsCost: 20 },
+    { id: 7, name: 'Shadow Ninja', strength: 15, cost: 1500, weaponsCost: 15 },
+    { id: 8, name: 'Thunder Fist', strength: 18, cost: 1800, weaponsCost: 18 },
+    { id: 9, name: 'Ghost Runner', strength: 12, cost: 1200, weaponsCost: 12 },
+    { id: 10, name: 'Iron Duke', strength: 25, cost: 2500, weaponsCost: 25 }
+  ];
+  
+  document.getElementById('title-screen').style.display = 'none';
+  document.getElementById('game-container').style.display = 'block';
+  
+  updateResources();
+  updatePrestigeUI();
+  updateHomiesDisplay();
+  updateRecruitList();
+  showNotification('New game started!');
+}
+
+function updateResources() {
+  document.getElementById('cash').textContent = `$${gameState.resources.cash}`;
+  document.getElementById('drugs').textContent = gameState.resources.drugs;
+  document.getElementById('weapons').textContent = gameState.resources.weapons;
+  document.getElementById('respect').textContent = gameState.resources.respect;
+  document.getElementById('available-homies').textContent = 
+    gameState.homies.filter(h => !h.assigned).length;
+}
+
+function updateProductionRates() {
+  const rates = {
+    cash: 0,
+    drugs: 0,
+    weapons: 0,
+    respect: 0
+  };
+
+  Object.entries(gameState.buildings).forEach(([buildingId, building]) => {
+    const production = building.production * building.homies.length * gameState.prestige.thugForce;
+    
+    switch(buildingId) {
+      case 'drug-lab':
+        rates.drugs += production;
+        break;
+      case 'weapons-factory':
+        rates.weapons += production;
+        break;
+      case 'counterfeit':
+        rates.cash += production;
+        break;
+      case 'gangbangers-base':
+        rates.respect += production;
+        break;
+    }
+  });
+
+  document.getElementById('cash-per-second').textContent = rates.cash.toFixed(1);
+  document.getElementById('drugs-per-second').textContent = rates.drugs.toFixed(1);
+  document.getElementById('weapons-per-second').textContent = rates.weapons.toFixed(1);
+  document.getElementById('respect-per-second').textContent = rates.respect.toFixed(1);
+}
+
+function openAssignModal(buildingId) {
+  gameState.currentBuilding = buildingId;
+  const modal = document.getElementById('assignModal');
+  const homiesList = document.getElementById('homies-list');
+  homiesList.innerHTML = '';
+  
+  const unassignedHomies = gameState.homies.filter(homie => !homie.assigned);
+  
+  if (unassignedHomies.length === 0) {
+    homiesList.innerHTML = '<p>No available homies to assign!</p>';
+  } else {
+    unassignedHomies.forEach(homie => {
+      const homieElement = document.createElement('div');
+      homieElement.className = 'homie';
+      homieElement.innerHTML = `
+        <h4>${homie.name}</h4>
+        <p>Strength: ${homie.strength}</p>
+        <button onclick="assignHomie(${homie.id})">Assign</button>
+      `;
+      homiesList.appendChild(homieElement);
+    });
+  }
+  
+  modal.style.display = 'block';
+}
+
+function closeAssignModal() {
+  document.getElementById('assignModal').style.display = 'none';
+  gameState.currentBuilding = null;
+}
+
+function assignHomie(homieId) {
+  const building = gameState.buildings[gameState.currentBuilding];
+  if (building.homies.length >= building.maxHomies) {
+    showNotification('Building is at maximum capacity!');
+    return;
+  }
+  
+  const homie = gameState.homies.find(h => h.id === homieId);
+  if (!homie) return;
+  
+  if (homie.assigned) {
+    showNotification('This homie is already assigned!');
+    return;
+  }
+  
+  building.homies.push(homieId);
+  homie.assigned = true;
+  homie.assignedTo = gameState.currentBuilding;
+  
+  document.getElementById(`${gameState.currentBuilding}-homies`).textContent = 
+    `${building.homies.length}/${building.maxHomies}`;
+    
+  closeAssignModal();
+  updateHomiesDisplay();
+  showNotification(`${homie.name} assigned to ${building.name}!`);
+}
+
+function updateHomiesDisplay() {
+  Object.keys(gameState.buildings).forEach(buildingId => {
+    const building = gameState.buildings[buildingId];
+    document.getElementById(`${buildingId}-homies`).textContent = 
+      `${building.homies.length}/${building.maxHomies}`;
+  });
+}
+
+function startGangWar() {
+  const availableHomies = gameState.homies.filter(h => !h.assigned);
+  if (availableHomies.length === 0) {
+    showNotification('No homies available for gang war!');
+    return;
+  }
+  
+  const totalStrength = availableHomies.reduce((sum, homie) => sum + homie.strength, 0);
+  const success = Math.random() < (totalStrength / 100);
+  
+  if (success) {
+    const reward = Math.floor(Math.random() * 1000) + 500;
+    gameState.resources.cash += reward;
+    gameState.resources.respect += 5;
+    showNotification(`Gang war won! Earned $${reward} and 5 respect!`);
+  } else {
+    gameState.resources.respect -= 2;
+    showNotification('Gang war lost! Lost 2 respect.');
+  }
+  
+  updateResources();
+}
+
+function showNotification(message) {
+  const notification = document.getElementById('notification');
+  notification.textContent = message;
+  notification.style.display = 'block';
+  setTimeout(() => {
+    notification.style.display = 'none';
+  }, 3000);
+}
+
+function recruitHomie(recruitId) {
+  const recruit = gameState.potentialRecruits.find(r => r.id === recruitId);
+  
+  if (!recruit) {
+    showNotification('Recruit not found!');
+    return;
+  }
+  
+  if (gameState.resources.cash < recruit.cost) {
+    showNotification('Not enough cash to recruit!');
+    return;
+  }
+  
+  if (gameState.resources.weapons < recruit.weaponsCost) {
+    showNotification('Not enough weapons to equip recruit!');
+    return;
+  }
+  
+  gameState.resources.cash -= recruit.cost;
+  gameState.resources.weapons -= recruit.weaponsCost;
+  
+  const newHomie = {
+    id: recruit.id,
+    name: recruit.name,
+    strength: recruit.strength,
+    assigned: false
+  };
+  
+  gameState.homies.push(newHomie);
+  
+  gameState.potentialRecruits = gameState.potentialRecruits.filter(r => r.id !== recruitId);
+  
+  showNotification(`Successfully recruited ${recruit.name}!`);
+  updateResources();
+  updateRecruitList();
+}
+
+function refreshRecruits(force = false) {
+  const now = new Date().getTime();
+  
+  if (force || now >= gameState.recruitSystem.nextRefresh) {
+    const shuffled = [...gameState.recruitSystem.baseRecruits]
+      .sort(() => 0.5 - Math.random());
+    gameState.potentialRecruits = shuffled.slice(0, 5);
+    
+    gameState.recruitSystem.nextRefresh = now + gameState.recruitSystem.refreshInterval;
+    
+    updateRecruitList();
+    showNotification('New recruits have arrived!');
+  }
+}
+
+function updateRecruitTimer() {
+  if (!gameState.recruitSystem || !gameState.recruitSystem.nextRefresh) {
+    gameState.recruitSystem = {
+      nextRefresh: new Date().getTime() + 3600000,
+      refreshInterval: 3600000,
+      baseRecruits: gameState.recruitSystem?.baseRecruits || []
+    };
+  }
+
+  const now = new Date().getTime();
+  const timeLeft = gameState.recruitSystem.nextRefresh - now;
+  
+  if (timeLeft <= 0) {
+    refreshRecruits();
+    return;
+  }
+  
+  const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+  
+  const timerElement = document.getElementById('recruit-timer');
+  if (timerElement) {
+    timerElement.textContent = `Next batch in: ${minutes}m ${seconds}s`;
+  }
+}
+
+function updateRecruitList() {
+  const recruitList = document.getElementById('recruit-list');
+  const recruitSection = document.querySelector('.recruit-section');
+  
+  if (!document.querySelector('.recruit-section-header')) {
+    const header = document.createElement('div');
+    header.className = 'recruit-section-header';
+    header.innerHTML = `
+      <div>
+        <h2>Recruit New Homies</h2>
+        <span id="recruit-timer"></span>
+      </div>
+      <button class="refresh-button" onclick="refreshRecruits(true)">Force Refresh</button>
+    `;
+    recruitSection.insertBefore(header, recruitList);
+  }
+  
+  recruitList.innerHTML = '';
+  
+  gameState.potentialRecruits.forEach(recruit => {
+    const recruitCard = document.createElement('div');
+    recruitCard.className = 'recruit-card';
+    recruitCard.innerHTML = `
+      <h3>${recruit.name}</h3>
+      <p>Strength: ${recruit.strength}</p>
+      <div class="recruit-cost">
+        <p>Cost: $${recruit.cost}</p>
+        <p>Weapons needed: ${recruit.weaponsCost}</p>
+      </div>
+      <button onclick="recruitHomie(${recruit.id})">Recruit</button>
+    `;
+    recruitList.appendChild(recruitCard);
+  });
+}
+
+function updatePrestigeUI() {
+  if (!gameState.prestige) {
+    gameState.prestige = {
+      thugForce: 1,
+      totalResets: 0,
+      requiredResources: {
+        weapons: 10000,
+        drugs: 10000,
+        cash: 100000,
+        respect: 1000
+      }
+    };
+  }
+
+  document.getElementById('thug-force').textContent = `${(gameState.prestige.thugForce || 1).toFixed(1)}x`;
+  document.getElementById('total-resets').textContent = gameState.prestige.totalResets || 0;
+  
+  document.getElementById('req-weapons').textContent = gameState.resources.weapons || 0;
+  document.getElementById('req-drugs').textContent = gameState.resources.drugs || 0;
+  document.getElementById('req-cash').textContent = gameState.resources.cash || 0;
+  document.getElementById('req-respect').textContent = gameState.resources.respect || 0;
+  
+  const canPrestige = checkPrestigeRequirements();
+  document.getElementById('prestige-button').disabled = !canPrestige;
+}
+
+function checkPrestigeRequirements() {
+  return (
+    gameState.resources.weapons >= gameState.prestige.requiredResources.weapons &&
+    gameState.resources.drugs >= gameState.prestige.requiredResources.drugs &&
+    gameState.resources.cash >= gameState.prestige.requiredResources.cash &&
+    gameState.resources.respect >= gameState.prestige.requiredResources.respect
+  );
+}
+
+function calculatePrestigeBonus() {
+  const totalResources = 
+    (gameState.resources.weapons / gameState.prestige.requiredResources.weapons) +
+    (gameState.resources.drugs / gameState.prestige.requiredResources.drugs) +
+    (gameState.resources.cash / gameState.prestige.requiredResources.cash) +
+    (gameState.resources.respect / gameState.prestige.requiredResources.respect);
+  
+  return Math.sqrt(totalResources) * 0.1;
+}
+
+function initiatePrestige() {
+  if (!checkPrestigeRequirements()) return;
+  
+  const bonus = calculatePrestigeBonus();
+  gameState.prestige.thugForce += bonus;
+  gameState.prestige.totalResets++;
+  
+  gameState.resources = {
+    cash: 1000,
+    drugs: 100,
+    weapons: 50,
+    respect: 10,
+    health: 0
+  };
+  
+  Object.values(gameState.buildings).forEach(building => {
+    building.homies = [];
+  });
+  
+  gameState.homies.forEach(homie => {
+    homie.assigned = false;
+    homie.assignedTo = null;
+  });
+  
+  showNotification(`Prestige complete! New Thug Force: ${gameState.prestige.thugForce.toFixed(1)}x`);
+  updatePrestigeUI();
+  updateResources();
+  updateHomiesDisplay();
+}
+
+// Game loop
+setInterval(() => {
+  Object.entries(gameState.buildings).forEach(([buildingId, building]) => {
+    if (building.homies.length > 0) {
+      if (buildingId === 'drug-lab') {
+        gameState.resources.drugs += building.production * building.homies.length * gameState.prestige.thugForce;
+      } else if (buildingId === 'weapons-factory') {
+        gameState.resources.weapons += building.production * building.homies.length * gameState.prestige.thugForce;
+      } else if (buildingId === 'counterfeit') {
+        gameState.resources.cash += building.production * building.homies.length * gameState.prestige.thugForce;
+      } else if (buildingId === 'gangbangers-base') {
+        gameState.resources.respect += building.production * building.homies.length * gameState.prestige.thugForce;
+      } else if (buildingId === 'hospital') {
+        gameState.resources.health += building.production * building.homies.length * gameState.prestige.thugForce;
+      }
+    }
+  });
+  
+  updateResources();
+  updateProductionRates();
+  updateRecruitTimer();
+  updatePrestigeUI();
+}, 1000);
+
+// Initialize the game
+window.onload = function() {
+  setTimeout(() => {
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('title-screen').style.display = 'flex';
+    
+    for (let i = 1; i <= 3; i++) {
+      const savedData = localStorage.getItem(`gangstar-save-${i}`);
+      if (savedData) {
+        const data = JSON.parse(savedData);
+        const loadBtn = document.getElementById(`slot${i}-load`);
+        loadBtn.textContent = `Load Game (Saved: ${new Date(data.lastSaved).toLocaleDateString()})`;
+      }
+    }
+  }, 2000);
+  
+  updateProductionRates();
+  refreshRecruits();
+  updatePrestigeUI();
+};
+
+// Add autosave every 30 seconds
+setInterval(saveGame, 30000);
+
+// Initial updates
+updateResources();
+updateRecruitList();
+updatePrestigeUI();
+</script>
+
+<footer style="margin-top: 20px; text-align: center; color: #666;">
+  <p>Note: More buildings and features coming soon in future updates!</p>
+  <p>Current Version: 1.1 Beta</p>
+</footer>
+
+</div>
+</body></html>
