@@ -93,35 +93,6 @@ body {
   border-radius: 8px;
 }
 
-.prestige-section {
-  margin-top: 20px;
-  padding: 20px;
-  background: var(--secondary);
-  border-radius: 8px;
-}
-
-.prestige-stats {
-  margin-bottom: 15px;
-}
-
-.prestige-requirements {
-  margin: 15px 0;
-}
-
-.prestige-requirements ul {
-  list-style: none;
-  padding: 0;
-}
-
-.prestige-requirements li {
-  margin: 5px 0;
-}
-
-#prestige-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 .recruit-section {
   margin-top: 20px;
   padding: 20px;
@@ -250,8 +221,6 @@ button:hover {
       <li>Fixed recruit timer initialization bug</li>
       <li>Fixed homie assignment system</li>
       <li>Fixed building capacity display</li>
-      <li>Added Thug Legacy prestige system</li>
-      <li>Added production multipliers</li>
     </ul>
   </div>
   <h1 style="color: #ff4d4d; font-size: 48px; margin-bottom: 40px;">Gangstar Empire Tycoon</h1>
@@ -339,24 +308,6 @@ button:hover {
   <p>Available Homies for War: <span id="available-homies">5</span></p>
 </div>
 
-<div class="prestige-section">
-  <h2>Thug Legacy System</h2>
-  <div class="prestige-stats">
-    <p>Current Thug Force: <span id="thug-force">1x</span></p>
-    <p>Total Resets: <span id="total-resets">0</span></p>
-  </div>
-  <div class="prestige-requirements">
-    <h3>Requirements for Prestige:</h3>
-    <ul>
-      <li>Weapons: <span id="req-weapons">0</span>/10,000</li>
-      <li>Drugs: <span id="req-drugs">0</span>/10,000</li>
-      <li>Cash: $<span id="req-cash">0</span>/100,000</li>
-      <li>Respect: <span id="req-respect">0</span>/1,000</li>
-    </ul>
-  </div>
-  <button id="prestige-button" onclick="initiatePrestige()" disabled>Initiate Thug Legacy</button>
-</div>
-
 <div class="recruit-section">
   <div class="recruit-section-header">
     <div>
@@ -385,6 +336,39 @@ button:hover {
 <script>
 let currentSaveSlot = null;
 
+const gangNicknameGenerator = {
+  adjectives: [
+    'Shadow', 'Iron', 'Silent', 'Dark', 'Blood', 'Ghost', 'Steel', 'Thunder', 'Mad', 'Wild',
+    'Crazy', 'Quick', 'Deadly', 'Night', 'Street', 'Urban', 'Silver', 'Gold', 'Black', 'Red',
+    'Savage', 'Lone', 'Fierce', 'Bold', 'Grim', 'Raw', 'Pure', 'Prime', 'Swift', 'Cold',
+    'Brutal', 'Royal', 'Fatal', 'Ice', 'Fire', 'Storm', 'Heavy', 'Light', 'Neon', 'Toxic',
+    'Double', 'Triple', 'Zero', 'Alpha', 'Omega', 'Delta', 'Rogue', 'Lost', 'Found', 'True'
+  ],
+  
+  nouns: [
+    'Blade', 'Wolf', 'Snake', 'Dragon', 'Tiger', 'Hawk', 'Eagle', 'Fist', 'Knight', 'King',
+    'Prince', 'Duke', 'Boss', 'Lord', 'Ghost', 'Phantom', 'Shadow', 'Beast', 'Hunter', 'Warrior',
+    'Demon', 'Angel', 'Devil', 'Saint', 'Rider', 'Runner', 'Striker', 'Ninja', 'Samurai', 'Bandit',
+    'Raven', 'Phoenix', 'Lion', 'Bear', 'Cobra', 'Viper', 'Shark', 'Panther', 'Fox', 'Wolf',
+    'Reaper', 'Grave', 'Stone', 'Steel', 'Hammer', 'Blade', 'Knife', 'Gun', 'Shot', 'Bullet'
+  ],
+
+  generateNickname() {
+    const adjective = this.adjectives[Math.floor(Math.random() * this.adjectives.length)];
+    const noun = this.nouns[Math.floor(Math.random() * this.nouns.length)];
+    return `${adjective} ${noun}`;
+  },
+
+  // Generate a unique nickname not already in use
+  generateUniqueNickname(existingNames) {
+    let nickname;
+    do {
+      nickname = this.generateNickname();
+    } while (existingNames.includes(nickname));
+    return nickname;
+  }
+};
+
 const gameState = {
   resources: {
     cash: 1000,
@@ -392,16 +376,6 @@ const gameState = {
     weapons: 50,
     respect: 10,
     health: 0
-  },
-  prestige: {
-    thugForce: 1,
-    totalResets: 0,
-    requiredResources: {
-      weapons: 10000,
-      drugs: 10000,
-      cash: 100000,
-      respect: 1000
-    }
   },
   buildings: {
     'drug-lab': {
@@ -472,7 +446,6 @@ function saveGame() {
   
   const saveData = {
     resources: gameState.resources,
-    prestige: gameState.prestige,
     buildings: gameState.buildings,
     homies: gameState.homies,
     potentialRecruits: gameState.potentialRecruits,
@@ -493,36 +466,17 @@ function loadSaveSlot(slot) {
   }
   
   const data = JSON.parse(savedData);
-  
-  // Initialize default prestige data if missing
-  const defaultPrestige = {
-    thugForce: 1,
-    totalResets: 0,
-    requiredResources: {
-      weapons: 10000,
-      drugs: 10000,
-      cash: 100000,
-      respect: 1000
-    }
-  };
-  
-  gameState.resources = data.resources || gameState.resources;
-  gameState.prestige = data.prestige || defaultPrestige;
-  gameState.buildings = data.buildings || gameState.buildings;
-  gameState.homies = data.homies || gameState.homies;
-  gameState.potentialRecruits = data.potentialRecruits || gameState.potentialRecruits;
-  gameState.recruitSystem = data.recruitSystem || {
-    nextRefresh: new Date().getTime() + 3600000,
-    refreshInterval: 3600000,
-    baseRecruits: gameState.recruitSystem.baseRecruits
-  };
+  gameState.resources = data.resources;
+  gameState.buildings = data.buildings;
+  gameState.homies = data.homies;
+  gameState.potentialRecruits = data.potentialRecruits;
+  gameState.recruitSystem = data.recruitSystem;
   
   currentSaveSlot = slot;
   document.getElementById('title-screen').style.display = 'none';
   document.getElementById('game-container').style.display = 'block';
   
   updateResources();
-  updatePrestigeUI();
   updateHomiesDisplay();
   updateRecruitList();
   showNotification('Game loaded!');
@@ -538,17 +492,6 @@ function startNewGame(slot) {
     health: 0
   };
   
-  gameState.prestige = {
-    thugForce: 1,
-    totalResets: 0,
-    requiredResources: {
-      weapons: 10000,
-      drugs: 10000,
-      cash: 100000,
-      respect: 1000
-    }
-  };
-
   Object.values(gameState.buildings).forEach(building => {
     building.homies = [];
   });
@@ -579,7 +522,6 @@ function startNewGame(slot) {
   document.getElementById('game-container').style.display = 'block';
   
   updateResources();
-  updatePrestigeUI();
   updateHomiesDisplay();
   updateRecruitList();
   showNotification('New game started!');
@@ -603,7 +545,7 @@ function updateProductionRates() {
   };
 
   Object.entries(gameState.buildings).forEach(([buildingId, building]) => {
-    const production = building.production * building.homies.length * gameState.prestige.thugForce;
+    const production = building.production * building.homies.length;
     
     switch(buildingId) {
       case 'drug-lab':
@@ -621,10 +563,10 @@ function updateProductionRates() {
     }
   });
 
-  document.getElementById('cash-per-second').textContent = rates.cash.toFixed(1);
-  document.getElementById('drugs-per-second').textContent = rates.drugs.toFixed(1);
-  document.getElementById('weapons-per-second').textContent = rates.weapons.toFixed(1);
-  document.getElementById('respect-per-second').textContent = rates.respect.toFixed(1);
+  document.getElementById('cash-per-second').textContent = rates.cash;
+  document.getElementById('drugs-per-second').textContent = rates.drugs;
+  document.getElementById('weapons-per-second').textContent = rates.weapons;
+  document.getElementById('respect-per-second').textContent = rates.respect;
 }
 
 function openAssignModal(buildingId) {
@@ -766,9 +708,26 @@ function refreshRecruits(force = false) {
   const now = new Date().getTime();
   
   if (force || now >= gameState.recruitSystem.nextRefresh) {
-    const shuffled = [...gameState.recruitSystem.baseRecruits]
-      .sort(() => 0.5 - Math.random());
-    gameState.potentialRecruits = shuffled.slice(0, 5);
+    // Get all existing homie names
+    const existingNames = [
+      ...gameState.homies.map(h => h.name),
+      ...gameState.potentialRecruits.map(r => r.name)
+    ];
+    
+    // Generate 5 new recruits with random names and stats
+    gameState.potentialRecruits = Array.from({length: 5}, () => {
+      const strength = Math.floor(Math.random() * 20) + 10; // Random strength between 10-30
+      const cost = strength * 100; // Cost based on strength
+      const weaponsCost = Math.ceil(strength / 2); // Weapons cost based on strength
+      
+      return {
+        id: Math.max(...gameState.homies.map(h => h.id), ...gameState.potentialRecruits.map(r => r.id)) + 1,
+        name: gangNicknameGenerator.generateUniqueNickname(existingNames),
+        strength,
+        cost,
+        weaponsCost
+      };
+    });
     
     gameState.recruitSystem.nextRefresh = now + gameState.recruitSystem.refreshInterval;
     
@@ -838,95 +797,20 @@ function updateRecruitList() {
   });
 }
 
-function updatePrestigeUI() {
-  if (!gameState.prestige) {
-    gameState.prestige = {
-      thugForce: 1,
-      totalResets: 0,
-      requiredResources: {
-        weapons: 10000,
-        drugs: 10000,
-        cash: 100000,
-        respect: 1000
-      }
-    };
-  }
-
-  document.getElementById('thug-force').textContent = `${(gameState.prestige.thugForce || 1).toFixed(1)}x`;
-  document.getElementById('total-resets').textContent = gameState.prestige.totalResets || 0;
-  
-  document.getElementById('req-weapons').textContent = gameState.resources.weapons || 0;
-  document.getElementById('req-drugs').textContent = gameState.resources.drugs || 0;
-  document.getElementById('req-cash').textContent = gameState.resources.cash || 0;
-  document.getElementById('req-respect').textContent = gameState.resources.respect || 0;
-  
-  const canPrestige = checkPrestigeRequirements();
-  document.getElementById('prestige-button').disabled = !canPrestige;
-}
-
-function checkPrestigeRequirements() {
-  return (
-    gameState.resources.weapons >= gameState.prestige.requiredResources.weapons &&
-    gameState.resources.drugs >= gameState.prestige.requiredResources.drugs &&
-    gameState.resources.cash >= gameState.prestige.requiredResources.cash &&
-    gameState.resources.respect >= gameState.prestige.requiredResources.respect
-  );
-}
-
-function calculatePrestigeBonus() {
-  const totalResources = 
-    (gameState.resources.weapons / gameState.prestige.requiredResources.weapons) +
-    (gameState.resources.drugs / gameState.prestige.requiredResources.drugs) +
-    (gameState.resources.cash / gameState.prestige.requiredResources.cash) +
-    (gameState.resources.respect / gameState.prestige.requiredResources.respect);
-  
-  return Math.sqrt(totalResources) * 0.1;
-}
-
-function initiatePrestige() {
-  if (!checkPrestigeRequirements()) return;
-  
-  const bonus = calculatePrestigeBonus();
-  gameState.prestige.thugForce += bonus;
-  gameState.prestige.totalResets++;
-  
-  gameState.resources = {
-    cash: 1000,
-    drugs: 100,
-    weapons: 50,
-    respect: 10,
-    health: 0
-  };
-  
-  Object.values(gameState.buildings).forEach(building => {
-    building.homies = [];
-  });
-  
-  gameState.homies.forEach(homie => {
-    homie.assigned = false;
-    homie.assignedTo = null;
-  });
-  
-  showNotification(`Prestige complete! New Thug Force: ${gameState.prestige.thugForce.toFixed(1)}x`);
-  updatePrestigeUI();
-  updateResources();
-  updateHomiesDisplay();
-}
-
 // Game loop
 setInterval(() => {
   Object.entries(gameState.buildings).forEach(([buildingId, building]) => {
     if (building.homies.length > 0) {
       if (buildingId === 'drug-lab') {
-        gameState.resources.drugs += building.production * building.homies.length * gameState.prestige.thugForce;
+        gameState.resources.drugs += building.production * building.homies.length;
       } else if (buildingId === 'weapons-factory') {
-        gameState.resources.weapons += building.production * building.homies.length * gameState.prestige.thugForce;
+        gameState.resources.weapons += building.production * building.homies.length;
       } else if (buildingId === 'counterfeit') {
-        gameState.resources.cash += building.production * building.homies.length * gameState.prestige.thugForce;
+        gameState.resources.cash += building.production * building.homies.length;
       } else if (buildingId === 'gangbangers-base') {
-        gameState.resources.respect += building.production * building.homies.length * gameState.prestige.thugForce;
+        gameState.resources.respect += building.production * building.homies.length;
       } else if (buildingId === 'hospital') {
-        gameState.resources.health += building.production * building.homies.length * gameState.prestige.thugForce;
+        gameState.resources.health += building.production * building.homies.length;
       }
     }
   });
@@ -934,7 +818,6 @@ setInterval(() => {
   updateResources();
   updateProductionRates();
   updateRecruitTimer();
-  updatePrestigeUI();
 }, 1000);
 
 // Initialize the game
@@ -955,7 +838,6 @@ window.onload = function() {
   
   updateProductionRates();
   refreshRecruits();
-  updatePrestigeUI();
 };
 
 // Add autosave every 30 seconds
@@ -964,7 +846,6 @@ setInterval(saveGame, 30000);
 // Initial updates
 updateResources();
 updateRecruitList();
-updatePrestigeUI();
 </script>
 
 <footer style="margin-top: 20px; text-align: center; color: #666;">
