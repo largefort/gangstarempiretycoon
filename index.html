@@ -16,138 +16,368 @@ body {
   padding: 20px;
 }
 
+/* Enhanced Loading Screen */
+#loading-screen {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  transition: opacity 0.5s ease-out;
+}
+
+#loading-screen svg {
+  filter: drop-shadow(0 0 10px rgba(255, 77, 77, 0.5));
+  transform-origin: center;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+#loading-screen h2 {
+  font-family: 'Arial Black', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: #ff4d4d;
+  text-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
+}
+
+/* Enhanced Title Screen */
+#title-screen {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  transition: all 0.3s ease;
+}
+
+#title-screen h1 {
+  font-family: 'Arial Black', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 5px;
+  text-shadow: 0 0 20px rgba(255, 77, 77, 0.7);
+  animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0% { text-shadow: 0 0 20px rgba(255, 77, 77, 0.7); }
+  50% { text-shadow: 0 0 30px rgba(255, 77, 77, 0.9); }
+  100% { text-shadow: 0 0 20px rgba(255, 77, 77, 0.7); }
+}
+
+.save-slot {
+  background: linear-gradient(145deg, #4d4d4d, #3d3d3d);
+  border: 2px solid rgba(255, 77, 77, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.save-slot:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.save-slot h3 {
+  color: #ff4d4d;
+  font-family: 'Arial Black', sans-serif;
+  margin-bottom: 15px;
+  text-shadow: 0 0 10px rgba(255, 77, 77, 0.3);
+}
+
+.save-slot button {
+  background: linear-gradient(145deg, #ff4d4d, #ff3333);
+  padding: 10px 20px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.save-slot button:hover {
+  background: linear-gradient(145deg, #ff3333, #ff1a1a);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
+}
+
+/* Version Info Styling */
+#title-screen .version-info {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  border-radius: 10px;
+  border-left: 4px solid #ff4d4d;
+  margin: 20px;
+}
+
+#title-screen .version-info h3 {
+  color: #ff4d4d;
+  margin-bottom: 10px;
+}
+
+#title-screen .version-info p {
+  color: #999;
+  margin: 5px 0;
+}
+
+#title-screen .version-info ul {
+  color: #999;
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+#title-screen .version-info li {
+  margin: 5px 0;
+  position: relative;
+  padding-left: 20px;
+}
+
+#title-screen .version-info li:before {
+  content: '•';
+  color: #ff4d4d;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+/* Enhanced Resource Container Styling */
 .resources {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
-  margin-bottom: 20px;
+  gap: 20px;
+  margin: 30px 0;
 }
 
 .resource {
-  background: var(--secondary);
-  padding: 10px;
-  border-radius: 5px;
+  background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
+  border: 2px solid rgba(255, 77, 77, 0.2);
+  border-radius: 12px;
+  padding: 20px;
   text-align: center;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.resource:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 77, 77, 0.4);
+}
+
+.resource h3 {
+  color: var(--accent);
+  font-size: 1.2em;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.resource span {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
 .production-rate {
-  font-size: 0.8em;
+  margin-top: 10px;
+  font-size: 0.9em;
   color: #00ff00;
-  margin-top: 5px;
+  text-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
 }
 
+/* Enhanced Building Styling */
 .buildings {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  gap: 25px;
+  margin: 30px 0;
 }
 
 .building {
-  background: var(--secondary);
-  padding: 15px;
-  border-radius: 8px;
+  background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
+  border: 2px solid rgba(255, 77, 77, 0.2);
+  border-radius: 15px;
+  padding: 25px;
   position: relative;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.building:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 77, 77, 0.4);
 }
 
 .building h3 {
-  margin-top: 0;
+  color: var(--accent);
+  font-size: 1.3em;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
+.building p {
+  color: #ccc;
+  margin: 10px 0;
+  font-size: 1.1em;
+}
+
+/* Enhanced Assign Modal Styling */
 .modal {
-  display: none;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
 }
 
 .modal-content {
-  background: var(--secondary);
-  width: 80%;
-  max-width: 500px;
-  margin: 50px auto;
-  padding: 20px;
-  border-radius: 8px;
+  background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
+  border: 2px solid rgba(255, 77, 77, 0.3);
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 800px;
+  width: 90%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .homies-list {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-bottom: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  margin: 20px 0;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 10px;
 }
 
 .homie {
-  background: var(--main-bg);
-  padding: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.gang-wars {
-  margin-top: 20px;
+  background: linear-gradient(145deg, #363636, #2a2a2a);
+  border: 1px solid rgba(255, 77, 77, 0.2);
+  border-radius: 12px;
   padding: 20px;
-  background: var(--secondary);
-  border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
+.homie:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 77, 77, 0.4);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.homie h4 {
+  color: #fff;
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+
+/* Enhanced Recruit Section Styling */
 .recruit-section {
-  margin-top: 20px;
-  padding: 20px;
-  background: var(--secondary);
-  border-radius: 8px;
+  background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
+  border: 2px solid rgba(255, 77, 77, 0.2);
+  border-radius: 20px;
+  padding: 30px;
+  margin: 30px 0;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
 }
 
 .recruit-section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 25px;
 }
 
-.recruit-timer {
-  font-size: 0.9em;
+.recruit-section-header h2 {
   color: var(--accent);
+  font-size: 1.8em;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
-.refresh-button {
-  background: #4CAF50;
-  margin-left: 10px;
+#recruit-timer {
+  color: #ccc;
+  font-size: 1.1em;
+  margin-top: 5px;
 }
 
 .recruit-list {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-  margin-top: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+  margin-top: 25px;
 }
 
 .recruit-card {
-  background: var(--main-bg);
-  padding: 15px;
-  border-radius: 5px;
+  background: linear-gradient(145deg, #363636, #2a2a2a);
+  border: 1px solid rgba(255, 77, 77, 0.2);
+  border-radius: 15px;
+  padding: 25px;
   text-align: center;
+  transition: all 0.3s ease;
+}
+
+.recruit-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255, 77, 77, 0.4);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+.recruit-card h3 {
+  color: #fff;
+  font-size: 1.4em;
+  margin-bottom: 15px;
+}
+
+.recruit-card p {
+  color: #ccc;
+  margin: 10px 0;
+  font-size: 1.1em;
 }
 
 .recruit-cost {
-  color: var(--accent);
-  font-size: 0.9em;
-  margin: 10px 0;
+  margin: 15px 0;
+  padding: 10px;
+  background: rgba(255, 77, 77, 0.1);
+  border-radius: 8px;
 }
 
+/* Enhanced Button Styling */
 button {
-  background: var(--accent);
-  color: var(--text);
+  background: linear-gradient(145deg, var(--accent), #ff3333);
+  color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 button:hover {
-  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(145deg, #ff3333, #ff1a1a);
+}
+
+.refresh-button {
+  background: linear-gradient(145deg, #4CAF50, #45a049);
+}
+
+.refresh-button:hover {
+  background: linear-gradient(145deg, #45a049, #3d8b40);
 }
 
 .notification {
@@ -210,18 +440,20 @@ button:hover {
 
 <div id="title-screen">
   <div style="position: absolute; top: 20px; left: 20px; text-align: left;">
-    <h3 style="color: #666; margin: 0;">Gangstar Empire Tycoon</h3>
-    <p style="color: #666; margin: 5px 0;">Version: 1.1.1 Beta</p>
-    <p style="color: #666; margin: 5px 0;">Last Updated: 2024</p>
-    <ul style="color: #666; font-size: 0.9em; margin: 10px 0; padding-left: 20px;">
-      <li>Added save system</li>
-      <li>Increased homie limit to 100</li>
-      <li>Added recruitment system</li>
-      <li>Added gang wars</li>
-      <li>Fixed recruit timer initialization bug</li>
-      <li>Fixed homie assignment system</li>
-      <li>Fixed building capacity display</li>
-    </ul>
+    <div class="version-info">
+      <h3>Gangstar Empire Tycoon</h3>
+      <p>Version: 1.1.1 Beta</p>
+      <p>Last Updated: 2024</p>
+      <ul>
+        <li>Added save system</li>
+        <li>Increased homie limit to 100</li>
+        <li>Added recruitment system</li>
+        <li>Added gang wars</li>
+        <li>Fixed recruit timer initialization bug</li>
+        <li>Fixed homie assignment system</li>
+        <li>Fixed building capacity display</li>
+      </ul>
+    </div>
   </div>
   <h1 style="color: #ff4d4d; font-size: 48px; margin-bottom: 40px;">Gangstar Empire Tycoon</h1>
   <div id="save-slots" style="display: flex; flex-direction: column; gap: 20px;">
@@ -592,11 +824,12 @@ function openAssignModal(buildingId) {
     });
   }
   
-  modal.style.display = 'block';
+  modal.style.display = 'flex'; // Changed from 'block' to 'flex'
 }
 
 function closeAssignModal() {
-  document.getElementById('assignModal').style.display = 'none';
+  const modal = document.getElementById('assignModal');
+  modal.style.display = 'none';
   gameState.currentBuilding = null;
 }
 
@@ -850,7 +1083,7 @@ updateRecruitList();
 
 <footer style="margin-top: 20px; text-align: center; color: #666;">
   <p>Note: More buildings and features coming soon in future updates!</p>
-  <p>Current Version: 1.1 Beta</p>
+  <p>Current Version: 1.3 Beta</p>
 </footer>
 
 </div>
