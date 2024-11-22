@@ -1,5 +1,21 @@
 <html><head><base href="." />
 <title>Gangstar Empire Tycoon</title>
+<audio id="bgm" loop>
+  <source src="audio/gang%204%20life.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="assign-sound">
+  <source src="audio/assign.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="recruit-sound">
+  <source src="audio/recruitsoundeffect.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="gang-war-sound">
+  <source src="audio/gunshots.mp3" type="audio/mpeg">
+</audio>
+
 <style>
 :root {
   --main-bg: #1a1a1a;
@@ -425,6 +441,11 @@ button:hover {
   width: 300px; 
   text-align: center;
 }
+
+/* Remove the audio controls styling */
+.audio-controls {
+  display: none; /* Or you can completely remove this CSS block */
+}
 </style>
 </head>
 <body>
@@ -673,6 +694,13 @@ const gameState = {
   ]
 };
 
+const audio = {
+  bgm: document.getElementById('bgm'),
+  assignSound: document.getElementById('assign-sound'),
+  recruitSound: document.getElementById('recruit-sound'),
+  gangWarSound: document.getElementById('gang-war-sound')
+};
+
 function saveGame() {
   if (!currentSaveSlot) return;
   
@@ -757,6 +785,8 @@ function startNewGame(slot) {
   updateHomiesDisplay();
   updateRecruitList();
   showNotification('New game started!');
+
+  audio.bgm.play().catch(error => console.log("Audio autoplay prevented"));
 }
 
 function updateResources() {
@@ -858,6 +888,9 @@ function assignHomie(homieId) {
   closeAssignModal();
   updateHomiesDisplay();
   showNotification(`${homie.name} assigned to ${building.name}!`);
+  
+  audio.assignSound.currentTime = 0;
+  audio.assignSound.play().catch(error => console.log("Audio autoplay prevented"));
 }
 
 function updateHomiesDisplay() {
@@ -869,6 +902,9 @@ function updateHomiesDisplay() {
 }
 
 function startGangWar() {
+  audio.gangWarSound.currentTime = 0;
+  audio.gangWarSound.play().catch(error => console.log("Audio autoplay prevented"));
+
   const availableHomies = gameState.homies.filter(h => !h.assigned);
   if (availableHomies.length === 0) {
     showNotification('No homies available for gang war!');
@@ -933,6 +969,10 @@ function recruitHomie(recruitId) {
   gameState.potentialRecruits = gameState.potentialRecruits.filter(r => r.id !== recruitId);
   
   showNotification(`Successfully recruited ${recruit.name}!`);
+  
+  audio.recruitSound.currentTime = 0;
+  audio.recruitSound.play().catch(error => console.log("Audio autoplay prevented"));
+  
   updateResources();
   updateRecruitList();
 }
@@ -1083,7 +1123,7 @@ updateRecruitList();
 
 <footer style="margin-top: 20px; text-align: center; color: #666;">
   <p>Note: More buildings and features coming soon in future updates!</p>
-  <p>Current Version: 1.3 Beta</p>
+  <p>Current Version: 1.1 Beta</p>
 </footer>
 
 </div>
