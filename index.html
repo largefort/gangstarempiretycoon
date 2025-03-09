@@ -1,19 +1,18 @@
-<html><head><base href="." />
 <title>Gangstar Empire Tycoon</title>
 <audio id="bgm" loop>
-  <source src="https://cdn.freesound.org/previews/700/700437_5674468-lq.mp3" type="audio/mpeg">
+  <source src="audio/gang 4 life.mp3" type="audio/mpeg">
 </audio>
 
 <audio id="assign-sound">
-  <source src="https://cdn.freesound.org/previews/150/150222_2615119-lq.mp3" type="audio/mpeg">
+  <source src="audio/assign.mp3" type="audio/mpeg">
 </audio>
 
 <audio id="recruit-sound">
-  <source src="https://cdn.freesound.org/previews/434/434462_8941729-lq.mp3" type="audio/mpeg">
+  <source src="recruitsoundeffect.mp3" type="audio/mpeg">
 </audio>
 
 <audio id="gang-war-sound">
-  <source src="https://cdn.freesound.org/previews/522/522243_1115621-lq.mp3" type="audio/mpeg">
+  <source src="gunshots.mp3" type="audio/mpeg">
 </audio>
 
 <style>
@@ -472,6 +471,115 @@ button:hover {
 .audio-controls {
   display: none; /* Or you can completely remove this CSS block */
 }
+
+/* Conquest Section Styling */
+.conquest-section {
+  background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
+  border: 2px solid rgba(255, 77, 77, 0.2);
+  border-radius: 20px;
+  padding: 30px;
+  margin: 30px 0;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.conquest-button {
+  background: linear-gradient(145deg, #ff4d4d, #cc0000);
+  border: none;
+  padding: 15px 30px;
+  border-radius: 10px;
+  font-size: 1.2em;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+}
+
+.conquest-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(255, 77, 77, 0.3);
+}
+
+.conquest-modal {
+  max-width: 1000px !important;
+}
+
+.territories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  margin: 20px 0;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 15px;
+}
+
+.territory-card {
+  background: linear-gradient(145deg, #363636, #2a2a2a);
+  border: 1px solid rgba(255, 77, 77, 0.2);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+.territory-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 77, 77, 0.4);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.territory-card.owned {
+  border: 1px solid rgba(0, 255, 0, 0.4);
+}
+
+.territory-card.under-attack {
+  border: 1px solid rgba(255, 255, 0, 0.4);
+  animation: pulse 2s infinite;
+}
+
+.conquest-controls {
+  display: flex;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.homies-input {
+  background: #2d2d2d;
+  border: 1px solid rgba(255, 77, 77, 0.3);
+  border-radius: 8px;
+  padding: 10px;
+  color: white;
+  width: 100px;
+}
+
+/* Custom Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--main-bg);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(145deg, var(--accent), #cc0000);
+  border-radius: 6px;
+  border: 2px solid var(--main-bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(145deg, #ff3333, #990000);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--main-bg);
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) var(--main-bg);
+}
 </style>
 </head>
 <body>
@@ -488,9 +596,11 @@ button:hover {
 <div id="version-modal" class="version-modal">
   <span class="close-btn" onclick="closeVersionModal()">&times;</span>
   <h3>Gangstar Empire Tycoon</h3>
-  <p>Version: 1.1.2 Beta</p>
+  <p>Version: 2.0 Live</p>
   <p>Last Updated: 2024</p>
   <ul>
+    <li>Added Multiplayer Conquest Mode</li>
+    <li>Added Gang Territory Control System</li>
     <li>Added Distillery Den & Gasoline Syndicate</li>
     <li>Added liquor & gasoline resources</li>
     <li>Added save system</li>
@@ -508,9 +618,13 @@ button:hover {
   <div style="position: absolute; top: 20px; left: 20px; text-align: left;">
     <div class="version-info">
       <h3>Gangstar Empire Tycoon</h3>
-      <p>Version: 1.1.1 Beta</p>
+      <p>Version: 2.0 Live</p>
       <p>Last Updated: 2024</p>
       <ul>
+        <li>Added Multiplayer Conquest Mode</li>
+        <li>Added Gang Territory Control System</li>
+        <li>Added Distillery Den & Gasoline Syndicate</li>
+        <li>Added liquor & gasoline resources</li>
         <li>Added save system</li>
         <li>Increased homie limit to 100</li>
         <li>Added recruitment system</li>
@@ -626,6 +740,25 @@ button:hover {
   <h2>Gang Wars</h2>
   <button onclick="startGangWar()">Start Gang War</button>
   <p>Available Homies for War: <span id="available-homies">5</span></p>
+</div>
+
+<div class="conquest-section">
+  <h2>Gang Hideout Conquest</h2>
+  <button onclick="openConquestModal()" class="conquest-button">View Gang Territories</button>
+</div>
+
+<div id="conquestModal" class="modal">
+  <div class="modal-content conquest-modal">
+    <h2>Gang Territories</h2>
+    <div class="territories-grid" id="territories-grid">
+      <!-- Territory cards will be dynamically added here -->
+    </div>
+    <div class="conquest-controls">
+      <input type="number" id="homies-to-send" min="1" max="100" value="1" class="homies-input">
+      <button onclick="sendHomies()" class="conquest-action">Send Homies</button>
+    </div>
+    <button onclick="closeConquestModal()" class="close-modal">Close</button>
+  </div>
 </div>
 
 <div class="recruit-section">
@@ -765,6 +898,10 @@ const gameState = {
       { id: 14, name: 'Silent Blade', strength: 21, cost: 2100, weaponsCost: 21 },
       { id: 15, name: 'Blood Dragon', strength: 23, cost: 2300, weaponsCost: 23 }
     ]
+  },
+  territories: {
+    selectedTerritory: null,
+    attackingForces: {}
   },
   potentialRecruits: [
     { id: 6, name: 'Street Boss', strength: 20, cost: 2000, weaponsCost: 20 },
@@ -949,7 +1086,7 @@ function openAssignModal(buildingId) {
     });
   }
   
-  modal.style.display = 'flex'; // Changed from 'block' to 'flex'
+  modal.style.display = 'flex'; 
 }
 
 function closeAssignModal() {
@@ -1165,6 +1302,96 @@ function updateRecruitList() {
   });
 }
 
+// Initialize WebSocket connection
+const room = new WebsimSocket();
+
+// Territory management
+function openConquestModal() {
+  const modal = document.getElementById('conquestModal');
+  modal.style.display = 'flex';
+  updateTerritoriesDisplay();
+}
+
+function closeConquestModal() {
+  const modal = document.getElementById('conquestModal');
+  modal.style.display = 'none';
+  gameState.territories.selectedTerritory = null;
+}
+
+function updateTerritoriesDisplay() {
+  const grid = document.getElementById('territories-grid');
+  grid.innerHTML = '';
+  
+  // Display all connected players' territories
+  for (const clientId in room.party.peers) {
+    const { username } = room.party.peers[clientId];
+    const isOwned = clientId === room.party.client.id;
+    const isUnderAttack = gameState.territories.attackingForces[clientId];
+    
+    const card = document.createElement('div');
+    card.className = `territory-card ${isOwned ? 'owned' : ''} ${isUnderAttack ? 'under-attack' : ''}`;
+    card.innerHTML = `
+      <h3>${username}'s Territory</h3>
+      <p>Status: ${isOwned ? 'Your Territory' : isUnderAttack ? 'Under Attack' : 'Attackable'}</p>
+      ${!isOwned ? `<button onclick="selectTerritory('${clientId}')" class="conquest-action">Select Target</button>` : ''}
+    `;
+    grid.appendChild(card);
+  }
+}
+
+function selectTerritory(territoryId) {
+  gameState.territories.selectedTerritory = territoryId;
+  showNotification('Territory selected for attack');
+}
+
+function sendHomies() {
+  const territoryId = gameState.territories.selectedTerritory;
+  if (!territoryId) {
+    showNotification('Select a territory first!');
+    return;
+  }
+  
+  const homiesToSend = parseInt(document.getElementById('homies-to-send').value);
+  const availableHomies = gameState.homies.filter(h => !h.assigned).length;
+  
+  if (homiesToSend > availableHomies) {
+    showNotification('Not enough available homies!');
+    return;
+  }
+  
+  // Send attack event
+  room.send({
+    type: 'territory_attack',
+    targetId: territoryId,
+    homies: homiesToSend
+  });
+  
+  showNotification(`Sending ${homiesToSend} homies to attack!`);
+}
+
+// Add to room.onmessage handler
+room.onmessage = (event) => {
+  const data = event.data;
+  switch (data.type) {
+    case 'territory_attack':
+      handleTerritoryAttack(data);
+      break;
+    // ... existing cases ...
+  }
+};
+
+function handleTerritoryAttack(data) {
+  if (data.targetId === room.party.client.id) {
+    showNotification(`${data.username} is attacking your territory with ${data.homies} homies!`);
+    // Handle defense logic here
+  }
+}
+
+// Subscribe to peer presence changes
+room.party.subscribePresence((presence) => {
+  updateTerritoriesDisplay();
+});
+
 // Game loop
 setInterval(() => {
   Object.entries(gameState.buildings).forEach(([buildingId, building]) => {
@@ -1236,7 +1463,7 @@ updateRecruitList();
 
 <footer style="margin-top: 20px; text-align: center; color: #666;">
   <p>Note: More buildings and features coming soon in future updates!</p>
-  <p>Current Version: 1.1 Beta</p>
+  <p>Current Version: 2.0 Live</p>
 </footer>
 
 </div>
