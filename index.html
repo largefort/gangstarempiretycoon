@@ -1,4 +1,16 @@
 <title>Gangstar Empire Tycoon</title>
+<script type="importmap">
+{
+  "imports": {
+    "websim": "https://cdn.websim.ai/websim.js"
+  }
+}
+</script>
+<script type="module">
+  import { WebsimSocket } from 'websim';
+  window.WebsimSocket = WebsimSocket;
+</script>
+
 <audio id="bgm" loop>
   <source src="audio/gang 4 life.mp3" type="audio/mpeg">
 </audio>
